@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iron Will PWA</title>
+    <title>Iron Will Rank PWA</title>
     <style>
         body {
-            background-color: #333;
+            background-color: #e5e7eb;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -20,34 +20,46 @@
             height: 320px;
             background-color: #f3f4f6;
             position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            border: 2px solid #000;
         }
 
         header {
             background-color: #2c3e50;
             color: white;
-            padding: 5px;
-            font-size: 12px;
-            text-align: center;
+            padding: 8px;
+            font-size: 14px;
             font-weight: bold;
-            z-index: 10;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .screen {
+        .back-btn { cursor: pointer; display: none; }
+
+        /* Main Screen */
+        #main-screen, #rank-screen {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .counter-section {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
-            padding-bottom: 35px;
+            align-items: center;
         }
 
         .circle {
-            width: 110px;
-            height: 110px;
+            width: 130px;
+            height: 130px;
             border: 4px solid #d1d5db;
             border-radius: 50%;
             display: flex;
@@ -55,117 +67,64 @@
             justify-content: center;
             align-items: center;
             background: white;
-            margin-bottom: 10px;
         }
 
-        #display-days { font-size: 16px; font-weight: bold; color: #1f2937; }
-        #display-time { font-size: 9px; color: #6b7280; }
+        .days { font-size: 18px; font-weight: bold; }
+        .timer { font-size: 11px; color: #6b7280; }
 
-        /* Floating Red Reset Button */
-        #reset-btn {
-            position: absolute;
-            right: 10px;
-            top: 110px;
-            background-color: #ff4d4d;
-            color: white;
-            border: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 5px;
-            cursor: pointer;
-            z-index: 20;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        /* Rank Screen Design */
+        #rank-screen {
+            display: none;
+            overflow-y: auto;
+            background: #f8f9fa;
         }
 
-        /* Bottom Controls (My Rank & History) */
+        .rank-card {
+            background: white;
+            margin: 5px 10px;
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .rank-name { font-size: 13px; font-weight: bold; color: #2c3e50; border-bottom: 1px solid #eee; margin-bottom: 3px; }
+        .rank-req { font-size: 10px; color: #7f8c8d; }
+        .achieved { background-color: #d1fae5; border-color: #10b981; }
+
         .controls {
             display: flex;
             justify-content: space-around;
-            width: 100%;
-            padding-bottom: 10px;
-        }
-
-        .btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            text-align: center;
-            font-size: 9px;
-            color: #374151;
-        }
-
-        .icon-btn {
-            width: 32px;
-            height: 32px;
-            background-color: #e5e7eb;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto 4px;
-            font-size: 14px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        /* CloudPhone Nav Bar */
-        .cloud-nav {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 35px;
-            background-color: #000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 15px;
-            box-sizing: border-box;
-            z-index: 100;
-        }
-
-        .nav-icon { color: white; font-size: 18px; cursor: pointer; background: none; border: none; }
-        .home-circle { width: 14px; height: 14px; border: 2px solid white; border-radius: 50%; cursor: pointer; }
-
-        /* Side Menu */
-        #side-menu {
-            position: absolute;
-            left: -160px;
-            top: 0;
-            width: 150px;
-            height: 285px;
-            background: rgba(0, 0, 0, 0.95);
-            color: white;
-            transition: 0.3s;
-            z-index: 101;
-            padding: 15px 10px;
-        }
-        #side-menu.active { left: 0; }
-        .menu-item { padding: 12px 5px; border-bottom: 1px solid #333; font-size: 11px; cursor: pointer; }
-
-        /* Rank Screen */
-        #rank-screen {
-            display: none;
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 285px;
+            padding: 10px 0;
             background: #fff;
-            overflow-y: auto;
-            z-index: 50;
         }
-        .rank-card { padding: 8px; border-bottom: 1px solid #eee; text-align: center; }
+
+        .btn { border: none; background: none; font-size: 10px; cursor: pointer; text-align: center;}
+        .icon-btn { width: 30px; height: 30px; background: #e5e7eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 3px; }
+
+        #reset-btn {
+            position: absolute; right: 10px; top: 120px; background: #ff4d4d; color: white;
+            border: none; width: 28px; height: 28px; border-radius: 5px; cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
 <div id="app-container">
-    <header id="header-text">Iron Will</header>
+    <header>
+        <span id="back-arrow" class="back-btn" onclick="showMain()">←</span>
+        <span id="header-title">Iron Will</span>
+        <span></span>
+    </header>
 
-    <div id="main-screen" class="screen">
+    <div id="main-screen">
         <button id="reset-btn" onclick="resetCounter()">↺</button>
-        
-        <div class="circle">
-            <div id="display-days">0 days</div>
-            <div id="display-time">00:00:00</div>
+        <div class="counter-section">
+            <div class="circle">
+                <div class="days" id="display-days">0 days</div>
+                <div class="timer" id="display-time">00:00:00</div>
+            </div>
         </div>
-
         <div class="controls">
             <button class="btn" onclick="showRanks()">
                 <div class="icon-btn">★</div>My Rank
@@ -176,17 +135,8 @@
         </div>
     </div>
 
-    <div id="rank-screen"><div id="rank-list"></div></div>
-
-    <div id="side-menu">
-        <div class="menu-item" onclick="alert('Iron Will Cloud v1.2')">About</div>
-        <div class="menu-item" onclick="alert('Data is saved locally.')">Privacy Policy</div>
-    </div>
-
-    <div class="cloud-nav">
-        <button class="nav-icon" onclick="toggleMenu()">≡</button>
-        <div class="home-circle" onclick="showMain()"></div>
-        <button class="nav-icon" onclick="goBack()">←</button>
+    <div id="rank-screen">
+        <div id="rank-list"></div>
     </div>
 </div>
 
@@ -194,7 +144,18 @@
     let startTime = localStorage.getItem('startTime') || Date.now();
     localStorage.setItem('startTime', startTime);
 
-    function updateTimer() {
+    const ranks = [
+        { name: "Scout", days: 1 }, { name: "Private", days: 3 },
+        { name: "Corporal", days: 5 }, { name: "Sergeant", days: 7 },
+        { name: "Master Sergeant", days: 10 }, { name: "Knight", days: 14 },
+        { name: "Knight-Lieutenant", days: 21 }, { name: "Knight-Captain", days: 30 },
+        { name: "Knight-Champion", days: 60 }, { name: "Champion of the Light", days: 90 },
+        { name: "Commander", days: 120 }, { name: "Conqueror", days: 150 },
+        { name: "Marshal", days: 180 }, { name: "Field Marshal", days: 240 },
+        { name: "Grand Marshal", days: 365 }
+    ];
+
+    function updateDisplay() {
         const diff = Date.now() - startTime;
         const s = Math.floor((diff / 1000) % 60);
         const m = Math.floor((diff / (1000 * 60)) % 60);
@@ -204,48 +165,49 @@
         document.getElementById('display-days').innerText = d + " days";
         document.getElementById('display-time').innerText = 
             (h<10?"0":"")+h + ":" + (m<10?"0":"")+m + ":" + (s<10?"0":"")+s;
+        return d;
     }
 
-    function toggleMenu() { document.getElementById('side-menu').classList.toggle('active'); }
-    
-    function goBack() {
-        showMain();
-        document.getElementById('side-menu').classList.remove('active');
+    function showRanks() {
+        const currentDays = updateDisplay();
+        const list = document.getElementById('rank-list');
+        list.innerHTML = "";
+        ranks.forEach(r => {
+            const isAchieved = currentDays >= r.days;
+            list.innerHTML += `
+                <div class="rank-card ${isAchieved ? 'achieved' : ''}">
+                    <div class="rank-name">${r.name}</div>
+                    <div class="rank-req">Reach ${r.days} day${r.days>1?'s':''}</div>
+                </div>`;
+        });
+        document.getElementById('main-screen').style.display = 'none';
+        document.getElementById('rank-screen').style.display = 'block';
+        document.getElementById('back-arrow').style.display = 'inline';
+        document.getElementById('header-title').innerText = "My Rank";
     }
 
     function showMain() {
-        document.getElementById('rank-screen').style.display = 'none';
         document.getElementById('main-screen').style.display = 'flex';
-        document.getElementById('header-text').innerText = "Iron Will";
+        document.getElementById('rank-screen').style.display = 'none';
+        document.getElementById('back-arrow').style.display = 'none';
+        document.getElementById('header-title').innerText = "Iron Will";
     }
 
     function resetCounter() {
         if(confirm("Reset streak?")) {
-            const streak = document.getElementById('display-days').innerText;
-            localStorage.setItem('history', "Last reset: " + new Date().toLocaleString() + " (Streak: " + streak + ")");
+            localStorage.setItem('lastReset', new Date().toLocaleString());
             startTime = Date.now();
             localStorage.setItem('startTime', startTime);
-            updateTimer();
+            updateDisplay();
         }
     }
 
     function showHistory() {
-        const h = localStorage.getItem('history') || "No history found.";
-        alert("History:\n" + h);
+        alert("Last Reset: " + (localStorage.getItem('lastReset') || "No history"));
     }
 
-    function showRanks() {
-        const list = document.getElementById('rank-list');
-        list.innerHTML = "<h4 style='text-align:center'>Ranks</h4>";
-        const rs = ["Scout (1d)", "Private (3d)", "Sergeant (7d)", "Knight (14d)", "Marshal (180d)"];
-        rs.forEach(r => { list.innerHTML += `<div class="rank-card">${r}</div>`; });
-        document.getElementById('main-screen').style.display = 'none';
-        document.getElementById('rank-screen').style.display = 'block';
-        document.getElementById('header-text').innerText = "My Rank";
-    }
-
-    setInterval(updateTimer, 1000);
-    updateTimer();
+    setInterval(updateDisplay, 1000);
+    updateDisplay();
 </script>
 </body>
 </html>
